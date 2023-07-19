@@ -3,11 +3,12 @@
 
 // Global imports
 import * as z from "zod";
-import { MessageSquare } from "lucide-react";
+import { Code, Divide, MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { ChatCompletionRequestMessage } from "openai";
+import ReactMarkdown from "react-markdown";
 
 // Local imports
 import { Heading } from "@/components/Heading";
@@ -50,7 +51,7 @@ const ConversationPage = () => {
       const newMessages = [...messages, userMessage];
 
       // api call via axios
-      const response = await axios.post("/api/conversation", {
+      const response = await axios.post("/api/code", {
         messages: newMessages,
       });
       console.log(response.data.content); // testing
@@ -68,11 +69,11 @@ const ConversationPage = () => {
   return (
     <div>
       <Heading
-        title="Conversation"
-        description="OpenAI GPT-3.5-turbo."
-        icon={MessageSquare}
-        iconColor="text-violet-500"
-        bgColor="bg-violet-500/10"
+        title="Code Generation"
+        description="Generate Code using descriptive text."
+        icon={Code}
+        iconColor="text-green-700"
+        bgColor="bg-green-700/10"
       />
       <div className="px-4 lg:px-8">
         <Form {...form}>
@@ -88,7 +89,7 @@ const ConversationPage = () => {
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                       disabled={isLoading}
-                      placeholder="How do i calculate the radius of a circle?"
+                      placeholder="Simple toggle button using react hooks."
                       {...field} // onChange, value, name, blur, etc
                     />
                   </FormControl>
@@ -132,8 +133,23 @@ const ConversationPage = () => {
             >
               {/* render bot / user */}
               {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-              <p className="text-sm">
-              {message.content}</p>
+                {/* Markdown */}
+              <ReactMarkdown
+              components={{
+                pre: ({ node, ...props }) => (
+                  <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                    <pre {...props} />
+                  </div>
+                ),
+                code: ({ node, ...props }) => (
+                  // highlight the "code" snippets bg-black/10 
+                  <code className="bg-black/10 rounded-lg p-1" {...props} />
+                )
+              }}
+              className="text-sm overflow-hidden leading-7"
+              >
+                {message.content || ""}
+              </ReactMarkdown>
             </div>
           ))}
         </div>

@@ -3,7 +3,7 @@
 
 // Global imports
 import * as z from "zod";
-import { Code,  } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -38,7 +38,6 @@ const CodePage = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
     console.log(values); // testing
     // modify message array and make POST request via axios
     try {
@@ -68,9 +67,9 @@ const CodePage = () => {
   return (
     <div>
       <Heading
-        title="Code Generation"
-        description="Generate Code using descriptive text."
-        icon={Code}
+        title="Conversation"
+        description="OpenAI GPT-3.5-turbo."
+        icon={MessageSquare}
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
       />
@@ -132,8 +131,7 @@ const CodePage = () => {
             >
               {/* render bot / user */}
               {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-              <p className="text-sm">
-              {message.content}</p>
+              <p className="text-sm">{message.content}</p>
             </div>
           ))}
         </div>
