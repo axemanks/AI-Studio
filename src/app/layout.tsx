@@ -1,22 +1,29 @@
-import './globals.css'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+// app/layout.tsx
 
-const inter = Inter({ subsets: ['latin'] })
+import "./globals.css";
+import { Inter } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
-export const metadata: Metadata = {
-  title: 'Genius AI SaaS',
-  description: 'AI powered SaaS ',
-}
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata = {
+  title: "AI-Studio",
+  description: "AI Platform",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
+    <ClerkProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          {children}
+          
+        </body>
+      </html>
+    </ClerkProvider>
+  );
 }

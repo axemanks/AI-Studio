@@ -1,8 +1,28 @@
+// landing page for unauthenticated users
+
+import {Button} from "@/components/ui/button"
+import Link from "next/link";
+
 const LandingPage = () => {
     return (
+        <>
         <div>
             LandingPage (Unprotected)
         </div>
+        {/* button */}
+        <div>
+            <Link href="/sign-in">
+            <Button>
+                Login
+            </Button>
+            </Link>
+            <Link href="/sign-up">
+            <Button>
+                Register
+            </Button>
+            </Link>
+        </div>
+        </>
     )
 };
 
