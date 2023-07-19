@@ -3,7 +3,7 @@
 
 // Global imports
 import * as z from "zod";
-import { Code,  } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 
-const CodePage = () => {
+const ConversationPage = () => {
   // messages state
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const router = useRouter();
@@ -68,9 +68,9 @@ const CodePage = () => {
   return (
     <div>
       <Heading
-        title="Code Generation"
-        description="Generate Code using descriptive text."
-        icon={Code}
+        title="Conversation"
+        description="OpenAI GPT-3.5-turbo."
+        icon={MessageSquare}
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
       />
@@ -142,4 +142,4 @@ const CodePage = () => {
   );
 };
 
-export default CodePage;
+export default ConversationPage;
