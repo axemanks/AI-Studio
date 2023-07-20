@@ -1,5 +1,5 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
 
 generator client {
   provider = "prisma-client-js"
@@ -17,4 +17,14 @@ model UserApiLimit {
   count     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// User Subscription - @map and @@map allow you to tune the shape of your Prisma Client API by decoupling model and field names from table and column names in the underlying database. (when the names(or cases) don't match you can map one field to the other)
+model UserSubscription {
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  stripeCustomerId String? @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId String? @unique @map(name: "stripe_subscription_id")
+  stripePriceId String? @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
