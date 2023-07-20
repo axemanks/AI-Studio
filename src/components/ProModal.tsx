@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import axios from "axios";
 import { useState } from "react";
+import { toast } from 'react-hot-toast';
 
 // Array of available tools
 const tools = [
@@ -72,6 +73,7 @@ export const ProModal = () => {
       //
       window.location.href = response.data.url;
     } catch (error) {
+      toast.error("Something went wrong.");
       console.log("STRIPE_CLIENT_ERROR", error);
     } finally {
       setLoading(false);
@@ -113,9 +115,13 @@ export const ProModal = () => {
           {/* footer */}
           <DialogFooter>
             {/* Button */}
-            <Button 
-            onClick={onSubscribe}
-            size="lg" variant="premium" className="w-full">
+            <Button
+              disabled={loading}
+              onClick={onSubscribe}
+              size="lg"
+              variant="premium"
+              className="w-full"
+            >
               Upgrade
               <Zap className="w-4 h-4 ml-2 fill-white" />
             </Button>

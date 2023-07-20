@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { ChatCompletionRequestMessage } from "openai";
 import ReactMarkdown from "react-markdown";
+import { toast } from 'react-hot-toast'
 
 // Local imports
 import { Heading } from "@/components/Heading";
@@ -63,6 +64,9 @@ const ConversationPage = () => {
       // if 403 Open Pro Modal
       if (error?.response?.status === 403) {
         ProModal.onOpen();
+      } else {
+        // TOAST
+        toast.error("Something went wrong.")
       }
       console.log(error);
     } finally {

@@ -43,3 +43,7 @@ Change from localhost to production- add an endpoint https://dashboard.stripe.co
 
 stripe listen --forward-to localhost:3000/webhook
 
+React-hot-toast for notifications
+
+Support provided via CRISP
+https://crisp.chat/en/
