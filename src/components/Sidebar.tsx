@@ -5,11 +5,21 @@
 import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 
 // Local imports
 import { cn } from "@/lib/utils";
-import { ImageIcon, LayoutDashboard, MessageSquare, VideoIcon, Music, Code, Settings } from "lucide-react";
+import {
+  ImageIcon,
+  LayoutDashboard,
+  MessageSquare,
+  VideoIcon,
+  Music,
+  Code,
+  Settings,
+} from "lucide-react";
+import { getApiLimitCount } from "../lib/api-limit";
+import { FreeCounter } from "./FreeCounter";
 
 // we want to use Montserrat font on the logo only
 // we use the cn function to apply the font
@@ -27,7 +37,7 @@ const routes = [
     label: "Converstation",
     icon: MessageSquare,
     href: "/conversation",
-    color: "text-violet-500"
+    color: "text-violet-500",
   },
   {
     label: "Image Generation",
@@ -57,12 +67,14 @@ const routes = [
     label: "Settings",
     icon: Settings,
     href: "/settings",
-  }
+  },
 ];
 
+interface SidebarProps {
+  apiLimitCount: number;
+}
 
-
-const Sidebar = () => {
+const Sidebar = ({ apiLimitCount = 0 }: SidebarProps) => {
   const pathname = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -88,18 +100,25 @@ const Sidebar = () => {
               href={route.href}
               key={route.href}
               // highlights the current route
-              className={cn("text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition", pathname === route.href ? "text-white bg-white/10" : "text-zinc-400")}
+              className={cn(
+                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                pathname === route.href
+                  ? "text-white bg-white/10"
+                  : "text-zinc-400"
+              )}
             >
               <div className="flex items-center flex-1">
-                {/*  Icon */}
+                {/*  Icon for each route */}
                 <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
-                  {route.label}
-                
+                {route.label}
               </div>
             </Link>
           ))}
         </div>
       </div>
+
+      {/* counter */}
+      <FreeCounter apiLimitCount={apiLimitCount} />
     </div>
   );
 };

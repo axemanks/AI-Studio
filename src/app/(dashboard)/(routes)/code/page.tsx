@@ -23,8 +23,10 @@ import { Loader } from "@/components/Loader";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+import { useProModel } from "@/hooks/use-pro-modal";
 
 const ConversationPage = () => {
+  const ProModal = useProModel();
   // messages state
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const router = useRouter();
@@ -39,7 +41,6 @@ const ConversationPage = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
     console.log(values); // testing
     // modify message array and make POST request via axios
     try {
@@ -59,7 +60,10 @@ const ConversationPage = () => {
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset(); // clear
     } catch (error: any) {
-      // Todo: Open Pro Modal
+      // if 403 Open Pro Modal
+      if (error?.response?.status === 403) {
+        ProModal.onOpen();
+      }
       console.log(error);
     } finally {
       router.refresh();
@@ -133,20 +137,20 @@ const ConversationPage = () => {
             >
               {/* render bot / user */}
               {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                {/* Markdown */}
+              {/* Markdown */}
               <ReactMarkdown
-              components={{
-                pre: ({ node, ...props }) => (
-                  <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
-                    <pre {...props} />
-                  </div>
-                ),
-                code: ({ node, ...props }) => (
-                  // highlight the "code" snippets bg-black/10 
-                  <code className="bg-black/10 rounded-lg p-1" {...props} />
-                )
-              }}
-              className="text-sm overflow-hidden leading-7"
+                components={{
+                  pre: ({ node, ...props }) => (
+                    <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                      <pre {...props} />
+                    </div>
+                  ),
+                  code: ({ node, ...props }) => (
+                    // highlight the "code" snippets bg-black/10
+                    <code className="bg-black/10 rounded-lg p-1" {...props} />
+                  ),
+                }}
+                className="text-sm overflow-hidden leading-7"
               >
                 {message.content || ""}
               </ReactMarkdown>

@@ -3,11 +3,10 @@
 
 // Global imports
 import * as z from "zod";
-import { DownloadIcon, ImageIcon,  } from "lucide-react";
+import { DownloadIcon, ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-
 
 // Local imports
 import { Heading } from "@/components/Heading";
@@ -20,12 +19,20 @@ import { useState } from "react";
 import { Empty } from "@/components/Empty";
 import { Loader } from "@/components/Loader";
 import { cn } from "@/lib/utils";
+import { useProModel } from "@/hooks/use-pro-modal";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 
 const ImagePage = () => {
+  const ProModal = useProModel();
   const [images, setImages] = useState<string[]>([]);
   const router = useRouter();
 
@@ -35,31 +42,32 @@ const ImagePage = () => {
     defaultValues: {
       prompt: "",
       amount: "1",
-      resolution: "512x512"
+      resolution: "512x512",
     },
   });
 
   // extract the loading state from form
   const isLoading = form.formState.isSubmitting;
 
-
   // On Submit
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values); // testing
-    
+
     try {
       setImages([]); // clear images array
       const response = await axios.post("/api/image", values);
       // opean ai is expecting an array of urls...
       // get just the urls
-      const urls = response.data.map((image: { url: string}) => image.url);
+      const urls = response.data.map((image: { url: string }) => image.url);
       // set the images
       setImages(urls);
 
-
       form.reset(); // clear
     } catch (error: any) {
-      // Todo: Open Pro Modal
+      // if 403 Open Pro Modal
+      if (error?.response?.status === 403) {
+        ProModal.onOpen();
+      }
       console.log(error);
     } finally {
       router.refresh();
@@ -97,71 +105,61 @@ const ImagePage = () => {
               )}
             />
             {/* Number of Images */}
-            <FormField 
-            name="amount"
-            control={form.control}
-            render={({ field}) => (
-              <FormItem className="col-span-12 lg:col-span-2">
-                <Select 
-                disabled={isLoading}
-                onValueChange={field.onChange}
-                value={field.value}
-                defaultValue={field.value}
-                >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue defaultValue={field.value} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {amountOptions.map((option) => (
-                    <SelectItem
-                    key={option.value}
-                    value={option.value}
-                    >
-                      {option.label}
-
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-                </Select>
-              </FormItem>
-            )}
+            <FormField
+              name="amount"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-2">
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue defaultValue={field.value} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {amountOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
             />
             {/* Resolution */}
-            <FormField 
-            name="resolution"
-            control={form.control}
-            render={({ field}) => (
-              <FormItem className="col-span-12 lg:col-span-2">
-                <Select 
-                disabled={isLoading}
-                onValueChange={field.onChange}
-                value={field.value}
-                defaultValue={field.value}
-                >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue defaultValue={field.value} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {resolutionOptions.map((option) => (
-                    <SelectItem
-                    key={option.value}
-                    value={option.value}
-                    >
-                      {option.label}
-
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-                </Select>
-              </FormItem>
-            )}
+            <FormField
+              name="resolution"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="col-span-12 lg:col-span-2">
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue defaultValue={field.value} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {resolutionOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
             />
-
-
 
             {/* Generate Button */}
             <Button
@@ -190,23 +188,20 @@ const ImagePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid:cols-4 gap-4 mt-8">
           {/* src = url */}
           {images.map((src) => (
-            <Card
-              key={src}
-              className="rounded-lg overflow-hidden"
-              >
-                <div className="relative aspect-square">
-                  <Image alt="image" fill src={src} />
-                </div>
-                <CardFooter className="p-2">
-              <Button 
-              variant="secondary" 
-              className="w-full"
-              onClick={() => window.open(src)}
-              >
-              <DownloadIcon className="h-4 w-4 mr-2" />
-              Download
-              </Button>
-                </CardFooter>
+            <Card key={src} className="rounded-lg overflow-hidden">
+              <div className="relative aspect-square">
+                <Image alt="image" fill src={src} />
+              </div>
+              <CardFooter className="p-2">
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => window.open(src)}
+                >
+                  <DownloadIcon className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </CardFooter>
             </Card>
           ))}
         </div>

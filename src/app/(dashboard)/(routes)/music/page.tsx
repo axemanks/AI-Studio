@@ -18,8 +18,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Empty } from "@/components/Empty";
 import { Loader } from "@/components/Loader";
+import { useProModel } from "@/hooks/use-pro-modal";
 
 const MusicPage = () => {
+  const ProModal = useProModel();
   const [music, setMusic] = useState<string>();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,7 +46,10 @@ const MusicPage = () => {
 
       form.reset(); // clear
     } catch (error: any) {
-      // Todo: Open Pro Modal
+      // if 403 Open Pro Modal
+      if (error?.response?.status === 403) {
+        ProModal.onOpen();
+      }
       console.log(error);
     } finally {
       router.refresh();

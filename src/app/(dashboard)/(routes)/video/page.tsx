@@ -18,8 +18,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Empty } from "@/components/Empty";
 import { Loader } from "@/components/Loader";
+import { useProModel } from "@/hooks/use-pro-modal";
 
 const VideoGeneration = () => {
+  const ProModal = useProModel();
   const [video, setVideo] = useState<string>();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,7 +46,11 @@ const VideoGeneration = () => {
 
       form.reset(); // clear
     } catch (error: any) {
-      // Todo: Open Pro Modal
+      // if 403 Open Pro Modal
+      if (error?.response?.status === 403) {
+        ProModal.onOpen();
+      }
+
       console.log(error);
     } finally {
       router.refresh();
@@ -106,7 +112,10 @@ const VideoGeneration = () => {
         )}
         {/* Video playback */}
         {video && (
-          <video controls className="w-full aspect-video mt-8 rounded-lg bg-black">
+          <video
+            controls
+            className="w-full aspect-video mt-8 rounded-lg bg-black"
+          >
             <source src={video} />
           </video>
         )}

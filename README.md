@@ -22,4 +22,6 @@ Font:
 We want to use Montserrat for the logo only.
 Using cn to apply the classnames
 
-
+Prisma
+npx prisma db push
+npx prisma generate

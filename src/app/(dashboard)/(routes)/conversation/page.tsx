@@ -22,10 +22,12 @@ import { Loader } from "@/components/Loader";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+import { useProModel } from "@/hooks/use-pro-modal";
 
 const CodePage = () => {
   // messages state
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const ProModal = useProModel();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,10 +59,13 @@ const CodePage = () => {
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset(); // clear
     } catch (error: any) {
-      // Todo: Open Pro Modal
+      // if 403 Open Pro Modal
+      if (error?.response?.status === 403) {
+        ProModal.onOpen();
+      }
       console.log(error);
     } finally {
-      router.refresh();
+      router.refresh(); // rehydrate server components
     }
   };
 
