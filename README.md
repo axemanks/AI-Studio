@@ -41,3 +41,5 @@ created new account: AI-Studio
 Webhook- two events- checkout session completed and invoice payment succeded
 Change from localhost to production- add an endpoint https://dashboard.stripe.com/test/webhooks
 
+stripe listen --forward-to localhost:3000/webhook
+

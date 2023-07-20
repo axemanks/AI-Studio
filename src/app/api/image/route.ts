@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi } from "openai";
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -35,12 +36,19 @@ export async function POST(req: Request) {
     if (!resolution) {
       return new NextResponse("Resolution is required", { status: 400 });
     }
-    // Check of on Free Plan - 403 if no free trial
+    // Check if on Free Plan
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
+    // Check if Pro
+    const isPro = await checkSubscription();
+    // if no free trial left and not on pro then return 403
+    if (!freeTrial && !isPro) {
       return new NextResponse("Free Trial Expired", { status: 403 });
     };
+    if(!isPro){
     await increaseApiLimit();
+    }
+
+
     const response = await openai.createImage({
       prompt,
       n: parseInt(amount, 10), // have to parse the amount to an integer

@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN!,
@@ -24,12 +25,18 @@ export async function POST(req: Request) {
     if (!prompt) {
       return new NextResponse("Prompt is required", { status: 400 });
     }
-    // Check of on Free Plan - 403 if no free trial
+    // Check if on Free Plan
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
+    // Check if Pro
+    const isPro = await checkSubscription();
+    // if no free trial left and not on pro then return 403
+    if (!freeTrial && !isPro) {
       return new NextResponse("Free Trial Expired", { status: 403 });
     };
+    if(!isPro){
     await increaseApiLimit();
+    }
+
     // call replicate
     const response = await replicate.run(
       "anotherjesse/zeroscope-v2-xl:71996d331e8ede8ef7bd76eba9fae076d31792e4ddf4ad057779b443d6aea62f",
