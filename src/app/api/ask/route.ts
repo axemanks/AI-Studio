@@ -1,4 +1,4 @@
-// /api/conversation endpoint
+// /api/ask endpoint
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi } from "openai";
