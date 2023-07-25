@@ -3,11 +3,10 @@ Credits can be purchased to continue using the tools.
 
 
 Todos:
-Hydration error on mobile menu-button
+add grid background to chat
+add copy function to chats
 
 
-
-Followed: https://www.youtube.com/watch?v=ffJ38dBzrlY&t=344s
 Next JS 13.4.10: npx create-next-app@latest my-app --typescript --tailwind --eslint
 Uses Shadcn: shadcn-ui@latest init
 

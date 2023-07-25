@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 // Local imports
 import { Heading } from '@/components/Heading';
+import  './style.page.css' // the only external style for messages
 
 // Message type
 type Message = {
@@ -85,7 +86,7 @@ const ChatPage = () => {
 
       <div>
         {/* Chat Messages */}
-        <div className='container flex flex-col mx-auto mt-10 h-[500px] w-[500px] border border-blue-500 rounded-xl'>
+        <div className='container flex flex-col mx-auto mt-10 h-[500px] w-[500px] border border-blue-500 rounded-xl overflow-y-auto '>
           {chatLog.map((message, index) => (
             <div
               className={`flex p-2  border-2 rounded-md
@@ -96,13 +97,15 @@ const ChatPage = () => {
         }`}
               key={index}
             >
-              {message.message}
+              <pre className='chat-message' >{message.message}</pre>
             </div>
           ))}
         </div>
 
+
         {/* Input and send */}
-        <div className='container flex flex-row justify-center mb-10 '>
+        <div className='container flex flex-row justify-center mb-10 p-5
+        '>
           <form onSubmit={handleSubmit}>
             <input
               autoFocus
