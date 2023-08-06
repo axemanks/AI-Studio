@@ -25,7 +25,7 @@ import { UserAvatar } from '@/components/user-avatar';
 import { BotAvatar } from '@/components/bot-avatar';
 import { useProModel } from '@/hooks/use-pro-modal';
 
-const CodePage = () => {
+const askPage = () => {
   // messages state
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const ProModal = useProModel();
@@ -148,4 +148,4 @@ const CodePage = () => {
   );
 };
 
-export default CodePage;
+export default askPage;
